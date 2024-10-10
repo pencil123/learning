@@ -9,12 +9,33 @@
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <springboot.version>2.3.2.RELEASE</springboot.version>
+    <spring.cloud.version>2.2.5.RELEASE</spring.cloud.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <commons-io.version>2.4</commons-io.version>
+    <commons-cli.version>1.2</commons-cli.version>
+    <aspectj.version>1.9.6</aspectj.version>
+    <lombok.version>1.16.18</lombok.version>
+    <mockito-inline.version>3.3.3</mockito-inline.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <asm.version>4.2</asm.version>
+    <junit.version>4.12</junit.version>
+    <springfox-swagger.version>3.0.0</springfox-swagger.version>
     <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
     <spring-cloud.version>2020.0.1</spring-cloud.version>
     <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>io.github.longportapp</groupId>
+      <artifactId>openapi-sdk</artifactId>
+      <version>1.0.39</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <artifactId>spring-boot-starter</artifactId>
       <groupId>org.springframework.boot</groupId>
@@ -25,6 +46,11 @@
       <groupId>org.springframework.boot</groupId>
       <version>${spring-boot.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>5.8.0</version>
     </dependency>
     <dependency>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -48,19 +74,36 @@
       <groupId>cn.hutool</groupId>
       <version>5.7.22</version>
     </dependency>
-
+    <dependency>
+      <groupId>io.github.longportapp</groupId>
+      <artifactId>openapi-sdk</artifactId>
+      <version>1.0.39</version>
+    </dependency>
     <dependency>
       <artifactId>junit</artifactId>
       <groupId>junit</groupId>
       <scope>test</scope>
       <version>4.12</version>
     </dependency>
+    <dependency>
+      <groupId>io.github.longportapp</groupId>
+      <artifactId>openapi-sdk</artifactId>
+      <version>1.0.39</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.longportapp</groupId>
+      <artifactId>openapi-sdk</artifactId>
+      <version>1.0.39</version>
+    </dependency>
+
   </dependencies>
   <build>
     <plugins>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <!--        <version>${springboot.version}</version>-->
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -77,7 +120,6 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
       </resource>
     </resources>
   </build>
