@@ -1,6 +1,6 @@
 package lng.bridge.learning.jobs;
-
 import com.longport.*;
+import com.longport.quote.*;
 import com.longport.trade.*;
 import lng.bridge.learning.config.AccountConfig;
 import org.junit.Test;
@@ -9,25 +9,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+
 /**
- * 获取资产总览
+ * 委托下单
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class GetAccountBalance {
+public class SubmitOrder {
     @Autowired
     private AccountConfig accountConfig;
+
     @Test
-    public void getAccount() throws Exception {
+    public  void main() throws Exception {
         Config config = this.accountConfig.accountConfig();
-        //Config config = Config.fromEnv();
-        // Init config without ENV
-        // https://longportapp.github.io/openapi-sdk/java/com/longport/ConfigBuilder.html
-        //Config config = new ConfigBuilder("YOUR_APP_KEY", "YOUR_APP_SECRET", "YOUR_ACCESS_TOKEN").build();
+
+
         try (TradeContext ctx = TradeContext.create(config).get()) {
-            for (AccountBalance obj : ctx.getAccountBalance().get()) {
-                System.out.println(obj);
-            }
+            SubmitOrderOptions opts = new SubmitOrderOptions("700.HK",
+                    OrderType.LO,
+                    OrderSide.Buy,
+                    200,
+                    TimeInForceType.Day).setSubmittedPrice(new BigDecimal(50));
+            SubmitOrderResponse resp = ctx.submitOrder(opts).get();
+            System.out.println(resp);
         }
     }
 }
