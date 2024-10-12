@@ -2,9 +2,12 @@ package lng.bridge.learning.entity;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import lombok.Data;
 
+@Data
 public class Deal {
+
     private Long id;
     private String stockCode;
     private String operate;
@@ -12,6 +15,6 @@ public class Deal {
     private BigDecimal transactionAmount;
     private Long linkBuy;
     private String status;
-    private LocalDate addDate;
+    private LocalDateTime addDate;
     private String notes;
 }

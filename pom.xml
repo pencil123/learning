@@ -68,7 +68,13 @@
       <groupId>org.springframework.boot</groupId>
       <version>${spring-boot.version}</version>
     </dependency>
-
+    <!--lombok依赖-->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+      <version>1.16.18</version>
+    </dependency>
     <dependency>
       <artifactId>hutool-all</artifactId>
       <groupId>cn.hutool</groupId>
@@ -96,7 +102,18 @@
       <artifactId>openapi-sdk</artifactId>
       <version>1.0.39</version>
     </dependency>
-
+    <!--Mybatis-Plus依赖-->
+    <dependency>
+      <artifactId>mybatis-plus-boot-starter</artifactId>
+      <groupId>com.baomidou</groupId>
+      <version>3.4.3.4</version>
+    </dependency>
+    <dependency>
+      <artifactId>mysql-connector-java</artifactId>
+      <groupId>mysql</groupId>
+      <version>8.0.27</version>
+    </dependency>
+    <!--Mybatis-Plus依赖-->
   </dependencies>
   <build>
     <plugins>

@@ -1,7 +1,6 @@
 package lng.bridge.learning.jobs;
 
 import com.longport.Config;
-import com.longport.ConfigBuilder;
 import com.longport.trade.AccountBalance;
 import com.longport.trade.TradeContext;
 import lng.bridge.learning.config.AccountConfig;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GetAccountBalance {
+
     @Autowired
     private AccountConfig accountConfig;
 

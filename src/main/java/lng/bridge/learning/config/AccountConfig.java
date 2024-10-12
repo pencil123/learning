@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AccountConfig {
+
     private Logger logger = LoggerFactory.getLogger(AccountConfig.class);
 
 
@@ -21,7 +22,7 @@ public class AccountConfig {
     private String accessToken;
 
     public Config accountConfig() {
-        logger.info("the value infos ====  key: {},secret:{},token:{}",key,secret,accessToken);
+        logger.info("the value infos ====  key: {},secret:{},token:{}", key, secret, accessToken);
         try {
             return new ConfigBuilder(key, secret, accessToken).build();
         } catch (OpenApiException e) {
