@@ -5,8 +5,9 @@ import lng.bridge.learning.dao.DealMapper;
 import lng.bridge.learning.entity.Deal;
 import lng.bridge.learning.service.DealService;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements DealService {
 
 }

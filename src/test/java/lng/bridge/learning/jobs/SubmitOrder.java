@@ -23,14 +23,12 @@ public class SubmitOrder {
     @Test
     public  void main() throws Exception {
         Config config = this.accountConfig.accountConfig();
-
-
         try (TradeContext ctx = TradeContext.create(config).get()) {
             SubmitOrderOptions opts = new SubmitOrderOptions("700.HK",
                     OrderType.LO,
                     OrderSide.Buy,
                     200,
-                    TimeInForceType.Day).setSubmittedPrice(new BigDecimal(50));
+                    TimeInForceType.Day).setSubmittedPrice(new BigDecimal("4.46"));
             SubmitOrderResponse resp = ctx.submitOrder(opts).get();
             System.out.println(resp);
         }

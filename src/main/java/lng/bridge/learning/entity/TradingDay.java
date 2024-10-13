@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import lng.bridge.learning.enums.TradingDayTypeEnum;
 import lombok.Data;
 
+/**
+ * 交易日
+ */
 @Data
 public class TradingDay {
     private LocalDate theDate;

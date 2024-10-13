@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import lombok.Data;
 
+/**
+ * 操作的stock 列表
+ */
 @Data
 public class Stock {
-
     @TableId(type = IdType.AUTO)
     private Long id;
     private String code;
