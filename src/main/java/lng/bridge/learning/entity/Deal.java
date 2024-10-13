@@ -1,11 +1,11 @@
 package lng.bridge.learning.entity;
 
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import com.longport.trade.OrderSide;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * 成交了的订单

@@ -9,7 +9,7 @@ public enum TradingDayTypeEnum {
 
     private final String description;
 
-    TradingDayTypeEnum(String description){
+    TradingDayTypeEnum(String description) {
         this.description = description;
     }
 }

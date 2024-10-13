@@ -3,8 +3,10 @@ package lng.bridge.learning.jobs;
 import com.longport.Config;
 import com.longport.trade.*;
 import lng.bridge.learning.config.AccountConfig;
+import lng.bridge.learning.entity.OrderRecord;
 import lng.bridge.learning.entity.Stock;
 import lng.bridge.learning.entity.Submit;
+import lng.bridge.learning.service.OrderRecordService;
 import lng.bridge.learning.service.StockService;
 import lng.bridge.learning.service.SubmitService;
 import lng.bridge.learning.service.TradingDayService;
@@ -36,9 +38,11 @@ public class SubmitOrder2 {
     private StockService stockService;
     @Autowired
     private SubmitService submitService;
+    @Autowired
+    private OrderRecordService orderRecordService;
 
     @Test
-    public  void main() throws Exception {
+    public  void execute() throws Exception {
         logger.info("== Job HandleInitOrders execute runs");
         // 是否为交易日
 //        if(!tradingDayService.isTradingDay(LocalDate.now())){
@@ -61,15 +65,8 @@ public class SubmitOrder2 {
         // 提交订单
         Config config = this.accountConfig.accountConfig();
         try (TradeContext ctx = TradeContext.create(config).get()) {
-            for(Submit submit:submits) {
-                SubmitOrderOptions opts = new SubmitOrderOptions(submit.getStockCode(),
-                        OrderType.ELO,
-                        submit.getOperate(),
-                        submit.getTransactionAmount(),
-                        TimeInForceType.Day).setSubmittedPrice(submit.getTransactionPrice());
-                SubmitOrderResponse resp = ctx.submitOrder(opts).get();
-                System.out.println(resp);
-            }
+            final List<OrderRecord> orderRecords = submitService.submitOrders(submits);
+            orderRecordService.saveBatch(orderRecords);
         } catch (Exception e) {
             logger.warn("request Market Trading Days Fall:()",e.getMessage());
         }

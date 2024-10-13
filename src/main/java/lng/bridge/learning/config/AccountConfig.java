@@ -24,7 +24,7 @@ public class AccountConfig {
         try {
             return new ConfigBuilder(key, secret, accessToken).build();
         } catch (OpenApiException e) {
-            logger.error("Build Config Error:{}",e.getMessage());
+            logger.error("Build Config Error:{}", e.getMessage());
             //e.printStackTrace();
         }
         return null;

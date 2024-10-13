@@ -128,7 +128,7 @@ public class JsonResult<T> {
      * 有异常信息的时候使用
      */
     public static <T> JsonResult<T> error(ExceptionResolvable exceptionCode,
-            Throwable ex) {
+                                          Throwable ex) {
         return new JsonResult<>(exceptionCode.getCode(),
                 exceptionCode.getMessage(), null, ex);
     }
@@ -137,7 +137,7 @@ public class JsonResult<T> {
      * 有异常信息的时候
      */
     public static JsonResult<Void> error(Integer code, String message,
-            Throwable ex) {
+                                         Throwable ex) {
         return new JsonResult<>(code, message, null, ex);
     }
 

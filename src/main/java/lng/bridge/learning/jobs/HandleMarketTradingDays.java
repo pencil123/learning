@@ -4,9 +4,6 @@ import com.longport.Config;
 import com.longport.Market;
 import com.longport.quote.MarketTradingDays;
 import com.longport.quote.QuoteContext;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import lng.bridge.learning.config.AccountConfig;
 import lng.bridge.learning.entity.TradingDay;
 import lng.bridge.learning.enums.TradingDayTypeEnum;
@@ -16,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 维护交易日期
@@ -46,9 +47,9 @@ public class HandleMarketTradingDays {
                 tradingDays.add(new TradingDay(localDate1, TradingDayTypeEnum.HALF));
             }
             tradingDayService.saveBatch(tradingDays);
-            logger.info("Get Market Trading Days response:()",resp);
+            logger.info("Get Market Trading Days response:()", resp);
         } catch (Exception e) {
-            logger.warn("request Market Trading Days Fall:()",e.getMessage());
+            logger.warn("request Market Trading Days Fall:()", e.getMessage());
         }
     }
 }
