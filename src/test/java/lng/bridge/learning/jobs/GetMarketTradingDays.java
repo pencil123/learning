@@ -35,11 +35,10 @@ public class GetMarketTradingDays {
     @Test
     public void getAccount() throws Exception {
         Config config = this.accountConfig.accountConfig();
-        LocalDate localDate = LocalDate.now();
         List<TradingDay> tradingDays = new ArrayList<>();
         try (QuoteContext ctx = QuoteContext.create(config).get()) {
             MarketTradingDays resp = ctx
-                    .getTradingDays(Market.HK, localDate.plusDays(1), localDate.plusDays(1)).get();
+                    .getTradingDays(Market.HK, LocalDate.now(), LocalDate.now()).get();
             for (LocalDate localDate1 : resp.getTradingDays()) {
                 tradingDays.add(new TradingDay(localDate1, TradingDayTypeEnum.FULL));
             }
