@@ -32,7 +32,7 @@ public class HandleMarketTradingDays {
     private TradingDayService tradingDayService;
 
     //秒 分 小时 日期 月份 星期 年份。
-    @Scheduled(cron = "0 16 11 * * ?")
+    @Scheduled(cron = "0 8 1 * * ?")
     public void execute() {
         logger.info("== Job HandleMarketTRADINGDays execute runs");
         Config config = this.accountConfig.accountConfig();

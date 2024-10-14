@@ -40,7 +40,7 @@ public class HandleInitOrders {
     private OrderRecordService orderRecordService;
 
     //秒 分 小时 日期 月份 星期 年份。
-    @Scheduled(cron = "0 16 11 * * ?")
+    @Scheduled(cron = "0 9 1 * * ?")
     public void execute() {
         logger.info("== Job HandleInitOrders execute runs");
         // 是否为交易日

@@ -7,5 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface OrderRecordService extends IService<OrderRecord> {
-    List<OrderRecord> filterTodayOrders(LocalDate theDate);
+    List<OrderRecord> filterTodayNotFilledOrders(LocalDate theDate);
+    Boolean updateStatusFilled(String orderId);
 }

@@ -50,25 +50,27 @@ public class PollingOrders {
         }
 
         //九点之前 或者 16点之后，就退出
-        if (LocalTime.now().isBefore(LocalTime.of(9, 0, 0)) || LocalTime.now().isAfter(LocalTime.of(16, 0, 0))) {
-            return;
-            //12点之后 并且 13点之前，就退出
-        } else if (LocalTime.now().isAfter(LocalTime.of(12, 0, 0)) && LocalTime.now().isBefore(LocalTime.of(13, 0, 0))) {
-            return;
-        }
+//        if (LocalTime.now().isBefore(LocalTime.of(9, 0, 0)) || LocalTime.now().isAfter(LocalTime.of(16, 0, 0))) {
+//            return;
+//            //12点之后 并且 13点之前，就退出
+//        } else if (LocalTime.now().isAfter(LocalTime.of(12, 0, 0)) && LocalTime.now().isBefore(LocalTime.of(13, 0, 0))) {
+//            return;
+//        }
 
         //跟踪今天的订单
-        List<OrderRecord> orderRecords = orderRecordService.filterTodayOrders(LocalDate.now());
+        List<OrderRecord> orderRecords = orderRecordService.filterTodayNotFilledOrders(LocalDate.now());
+        logger.info("== Job PollingOrders execute runs:{}",orderRecords);
         if (orderRecords.isEmpty()) {
             return;
         }
-
+        logger.info("== Job PollingOrders execute runs");
         Config config = this.accountConfig.accountConfig();
         try (TradeContext ctx = TradeContext.create(config).get()) {
             for (OrderRecord orderRecord : orderRecords) {
                 OrderDetail detail = ctx.getOrderDetail(orderRecord.getOrderId()).get();
+                logger.info("== Job PollingOrders execute runs:{}",detail);
                 if (OrderStatus.Filled == detail.getStatus()) {
-                    // TODO: 2024/10/14  已经成交的订单，更新状态；下次轮询不再重复操作
+                    orderRecordService.updateStatusFilled(orderRecord.getOrderId());
                     constructOrder(orderRecord.getStockCode(), detail.getPrice(), detail.getQuantity());
                 }
                 System.out.println(detail);

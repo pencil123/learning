@@ -55,7 +55,7 @@ public class GetOrderDetails {
 //        }
 
         //跟踪今天的订单
-        List<OrderRecord> orderRecords = orderRecordService.filterTodayOrders(LocalDate.now());
+        List<OrderRecord> orderRecords = orderRecordService.filterTodayNotFilledOrders(LocalDate.now());
         if(orderRecords.isEmpty()){
             return;
         }

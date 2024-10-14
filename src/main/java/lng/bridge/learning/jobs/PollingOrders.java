@@ -61,7 +61,7 @@ public class PollingOrders {
         }
 
         //跟踪今天的订单
-        List<OrderRecord> orderRecords = orderRecordService.filterTodayOrders(LocalDate.now());
+        List<OrderRecord> orderRecords = orderRecordService.filterTodayNotFilledOrders(LocalDate.now());
         if (orderRecords.isEmpty()) {
             return;
         }
@@ -71,6 +71,7 @@ public class PollingOrders {
             for (OrderRecord orderRecord : orderRecords) {
                 OrderDetail detail = ctx.getOrderDetail(orderRecord.getOrderId()).get();
                 if (OrderStatus.Filled == detail.getStatus()) {
+                    orderRecordService.updateStatusFilled(orderRecord.getOrderId());
                     constructOrder(orderRecord.getStockCode(), detail.getPrice(), detail.getQuantity());
                 }
                 System.out.println(detail);

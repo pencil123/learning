@@ -41,7 +41,7 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, Submit> impleme
                     submit.getTransactionAmount(),
                     TimeInForceType.Day).setSubmittedPrice(submit.getTransactionPrice());
             SubmitOrderResponse resp = ctx.submitOrder(opts).get();
-            return new OrderRecord(resp.getOrderId(), LocalDate.now(), submit.getStockCode());
+            return new OrderRecord(resp.getOrderId(), LocalDate.now(), submit.getStockCode(),null);
         } catch (Exception e) {
             logger.warn("submit order:()", e.getMessage());
         }
@@ -61,7 +61,7 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, Submit> impleme
                         submit.getTransactionAmount(),
                         TimeInForceType.Day).setSubmittedPrice(submit.getTransactionPrice());
                 SubmitOrderResponse resp = ctx.submitOrder(opts).get();
-                orderRecords.add(new OrderRecord(resp.getOrderId(), LocalDate.now(), submit.getStockCode()));
+                orderRecords.add(new OrderRecord(resp.getOrderId(), LocalDate.now(), submit.getStockCode(),null));
             }
             return orderRecords;
         } catch (Exception e) {
