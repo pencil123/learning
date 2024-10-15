@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * 提交了未成交的订单
+ * 只记录-最初提交的订单（如果订单没有成交，后面重复提交，不进行记录）
  */
 @Data
 public class Submit {

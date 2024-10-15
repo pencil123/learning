@@ -6,11 +6,15 @@ import com.longport.trade.OrderSide;
 import com.longport.trade.OrderStatus;
 import com.longport.trade.TradeContext;
 import lng.bridge.learning.config.AccountConfig;
+import lng.bridge.learning.entity.Deal;
 import lng.bridge.learning.entity.OrderRecord;
 import lng.bridge.learning.entity.Submit;
+import lng.bridge.learning.service.DealService;
 import lng.bridge.learning.service.OrderRecordService;
 import lng.bridge.learning.service.SubmitService;
 import lng.bridge.learning.service.TradingDayService;
+import lng.bridge.learning.utils.BeanConvertUtils;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,8 @@ public class PollingOrders {
     private OrderRecordService orderRecordService;
     @Autowired
     private SubmitService submitService;
+    @Autowired
+    private DealService dealService;
 
 
     //秒 分 小时 日期 月份 星期 年份。
@@ -72,7 +78,18 @@ public class PollingOrders {
                 OrderDetail detail = ctx.getOrderDetail(orderRecord.getOrderId()).get();
                 if (OrderStatus.Filled == detail.getStatus()) {
                     orderRecordService.updateStatusFilled(orderRecord.getOrderId());
-                    constructOrder(orderRecord.getStockCode(), detail.getPrice(), detail.getQuantity());
+                    Submit byId = submitService.getById(orderRecord.getSubmitId());
+                    // 删除 Submit中的记录，在Deal 中添加记录
+                    submitService.removeById(orderRecord.getSubmitId());
+                    final Deal deal = BeanConvertUtils.copyProperties(byId, Deal.class);
+                    deal.setStatus("open");
+                    dealService.save(deal);
+                    //如果 Subimt 为 Sell，则修改 linkBuy 记录的状态
+                    if(deal.getOperate() == OrderSide.Sell){
+                        dealService.updateStatusClose(deal.getLinkBuy());
+                    }
+                    //继续生成新的订单
+                    constructOrder(deal.getStockCode(), detail.getPrice(), detail.getQuantity());
                 }
                 System.out.println(detail);
             }
