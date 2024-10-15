@@ -50,7 +50,7 @@ public class PollingOrders {
 
 
     //秒 分 小时 日期 月份 星期 年份。
-    @Scheduled(fixedDelay = 30000)
+    //@Scheduled(fixedDelay = 30000)
     public void execute() throws Exception {
         logger.info("== Job PollingOrders execute runs");
         // 是否为交易日

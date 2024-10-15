@@ -14,4 +14,7 @@ public interface SubmitService extends IService<Submit> {
 
     List<OrderRecord> submitOrders(List<Submit> submits);
 
+    Submit minBuy(String stockCode);
+    Submit maxSell(String stockCode);
+
 }

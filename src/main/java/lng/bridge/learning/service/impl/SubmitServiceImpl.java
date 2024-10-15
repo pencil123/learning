@@ -76,4 +76,24 @@ public class SubmitServiceImpl extends ServiceImpl<SubmitMapper, Submit> impleme
         }
         return orderRecords;
     }
+
+    @Override
+    public Submit minBuy(String stockCode) {
+        QueryWrapper<Submit> submitQueryWrapper = new QueryWrapper<>();
+        submitQueryWrapper.eq("stock_code", stockCode);
+        submitQueryWrapper.eq("operate","Buy");
+        submitQueryWrapper.orderByAsc("transaction_price");
+        submitQueryWrapper.last("limit 1");
+        return getOne(submitQueryWrapper);
+    }
+
+    @Override
+    public Submit maxSell(String stockCode) {
+        QueryWrapper<Submit> submitQueryWrapper = new QueryWrapper<>();
+        submitQueryWrapper.eq("stock_code", stockCode);
+        submitQueryWrapper.eq("operate","Sell");
+        submitQueryWrapper.orderByDesc("transaction_price");
+        submitQueryWrapper.last("limit 1");
+        return getOne(submitQueryWrapper);
+    }
 }
