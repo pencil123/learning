@@ -95,7 +95,7 @@ public class PollingOrders {
                         constructOrder(deal);
                     }
                 }
-                System.out.println(detail);
+                logger.info("== Job PollingOrders get resp:{}",detail);
             }
         }
     }

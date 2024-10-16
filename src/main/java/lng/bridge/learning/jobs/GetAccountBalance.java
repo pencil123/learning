@@ -4,12 +4,14 @@ import com.longport.Config;
 import com.longport.trade.AccountBalance;
 import com.longport.trade.TradeContext;
 import lng.bridge.learning.config.AccountConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GetAccountBalance {
-
+    private Logger logger = LoggerFactory.getLogger(PollingOrders.class);
     @Autowired
     private AccountConfig accountConfig;
 
@@ -21,7 +23,7 @@ public class GetAccountBalance {
         //Config config = new ConfigBuilder("YOUR_APP_KEY", "YOUR_APP_SECRET", "YOUR_ACCESS_TOKEN").build();
         try (TradeContext ctx = TradeContext.create(config).get()) {
             for (AccountBalance obj : ctx.getAccountBalance().get()) {
-                System.out.println(obj);
+                logger.info("the message:{}",obj);
             }
         }
     }
