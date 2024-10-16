@@ -50,7 +50,7 @@ public class PollingOrders {
 
 
     //秒 分 小时 日期 月份 星期 年份。
-    //@Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 30000)
     public void execute() throws Exception {
         logger.info("== Job PollingOrders execute runs");
         // 是否为交易日
@@ -82,25 +82,29 @@ public class PollingOrders {
                     // 删除 Submit中的记录，在Deal 中添加记录
                     submitService.removeById(orderRecord.getSubmitId());
                     final Deal deal = BeanConvertUtils.copyProperties(byId, Deal.class);
-                    deal.setStatus("open");
+                    final String dealStauts = deal.getOperate() == OrderSide.Buy ? "open" : "close";
+                    deal.setStatus(dealStauts);
                     dealService.save(deal);
                     //如果 Subimt 为 Sell，则修改 linkBuy 记录的状态
                     if(deal.getOperate() == OrderSide.Sell){
                         dealService.updateStatusClose(deal.getLinkBuy());
+                    }else{
+                        //如果操作为 sell，则完成闭环close；不需要生成订单
+                        //继续生成新的订单
+                        // TODO: 2024/10/16  当提交的价格和成交的价格不一致时，应该怎么处理？
+                        constructOrder(deal);
                     }
-                    //继续生成新的订单
-                    constructOrder(deal.getStockCode(), detail.getPrice(), detail.getQuantity());
                 }
                 System.out.println(detail);
             }
         }
     }
 
-    private void constructOrder(String stockCode, BigDecimal price, Long quantity) {
-        final BigDecimal buyPrice = price.multiply(new BigDecimal("0.9"), new MathContext(2));
-        final BigDecimal sellPrice = price.multiply(new BigDecimal("1.1"), new MathContext(2));
-        final Submit buySubmit = new Submit(stockCode, OrderSide.Buy, buyPrice, quantity, null, LocalDateTime.now(), "");
-        final Submit sellSubmit = new Submit(stockCode, OrderSide.Sell, sellPrice, quantity, null, LocalDateTime.now(), "");
+    private void constructOrder(Deal deal) {
+        final BigDecimal buyPrice = deal.getTransactionPrice().multiply(new BigDecimal("0.9"), new MathContext(2));
+        final BigDecimal sellPrice = deal.getTransactionPrice().multiply(new BigDecimal("1.1"), new MathContext(2));
+        final Submit buySubmit = new Submit(deal.getStockCode(), OrderSide.Buy, buyPrice, deal.getTransactionAmount(), deal.getId(), LocalDateTime.now(), "");
+        final Submit sellSubmit = new Submit(deal.getStockCode(), OrderSide.Sell, sellPrice, deal.getTransactionAmount(), deal.getId(), LocalDateTime.now(), "");
         submitService.save(buySubmit);
         submitService.save(sellSubmit);
         submitService.submitOrder(buySubmit);
