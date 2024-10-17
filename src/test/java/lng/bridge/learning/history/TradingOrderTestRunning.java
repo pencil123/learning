@@ -1,6 +1,7 @@
 package lng.bridge.learning.history;
 
 import com.longport.trade.OrderSide;
+import java.sql.Timestamp;
 import lng.bridge.learning.entity.CandleStickEntity;
 import lng.bridge.learning.entity.Deal;
 import lng.bridge.learning.entity.Submit;
@@ -43,42 +44,64 @@ public class TradingOrderTestRunning {
     public void execute() throws Exception {
 
         List<CandleStickEntity> candleStickEntities = candleStickEntityService.ListOrderByTime();
+        Map<String, Submit> stringSubmitMap;
         for (CandleStickEntity candleStickEntity : candleStickEntities) {
             logger.info("the entity:{}",candleStickEntity);
-            Map<String, Submit> stringSubmitMap = handleRealSubmit("7500.HK");
+            stringSubmitMap = handleRealSubmit("7500.HK");
+            logger.info("the buy price:{}",stringSubmitMap.get("Buy").getTransactionPrice());
             if (candleStickEntity.getHigh().compareTo(stringSubmitMap.get("Buy").getTransactionPrice()) <= 0) {
                 submitService.removeById(stringSubmitMap.get("Buy").getId());
                 final Deal deal = BeanConvertUtils.copyProperties(stringSubmitMap.get("Buy"), Deal.class);
                 deal.setStatus("open");
                 dealService.save(deal);
-                constructOrder(deal.getStockCode(), stringSubmitMap.get("Buy").getTransactionPrice(), stringSubmitMap.get("Buy").getTransactionAmount(),stringSubmitMap.get("Buy").getId(),candleStickEntity.getTimestamp());
+                //如果操作为 Buy, 则生成一个Buy 和 一个 Sell
+                constructOrder(deal,candleStickEntity.getTimestamp());
             }
             if (stringSubmitMap.get("Sell") != null && candleStickEntity.getLow().compareTo(stringSubmitMap.get("Sell").getTransactionPrice()) >= 0) {
+                logger.info("the Sell price:{}",stringSubmitMap.get("Sell").getTransactionPrice());
                 submitService.removeById(stringSubmitMap.get("Sell").getId());
                 final Deal deal = BeanConvertUtils.copyProperties(stringSubmitMap.get("Sell"), Deal.class);
                 deal.setStatus("open");
                 dealService.save(deal);
                 dealService.updateStatusClose(deal.getLinkBuy());
+                //如果操作为 sell，则生成一个买单
+                constructOrder(deal,candleStickEntity.getTimestamp());
             }
         }
     }
 
-    private void constructOrder(String stockCode, BigDecimal price, Long quantity, Long linkId, OffsetDateTime timeStamp) {
-        final BigDecimal buyPrice = price.multiply(new BigDecimal("0.9"), new MathContext(2));
-        final BigDecimal sellPrice = price.multiply(new BigDecimal("1.1"), new MathContext(2));
-        final Submit buySubmit = new Submit(stockCode, OrderSide.Buy, buyPrice, quantity, linkId, timeStamp.toLocalDateTime(), "");
-        final Submit sellSubmit = new Submit(stockCode, OrderSide.Sell, sellPrice, quantity, linkId, timeStamp.toLocalDateTime(), "");
+    /**
+     * 如果操作为 sell，则生成一个买单
+     * 如果操作为 Buy, 则生成一个Buy 和 一个 Sell
+     * @param deal
+     * @param timestamp
+     */
+
+    private void constructOrder(Deal deal, OffsetDateTime timestamp) {
+        BigDecimal buyPrice;
+        if(deal.getOperate() == OrderSide.Buy){
+            final BigDecimal sellPrice = deal.getTransactionPrice().multiply(new BigDecimal("1.1"), new MathContext(3));
+            final Submit sellSubmit = new Submit(deal.getStockCode(), OrderSide.Sell, sellPrice, deal.getTransactionAmount(), deal.getId(),
+                    timestamp.toLocalDateTime(), "");
+            submitService.save(sellSubmit);
+            submitService.submitOrder(sellSubmit);
+        }
+        if(deal.getOperate() == OrderSide.Sell){
+            buyPrice  = deal.getTransactionPrice().multiply(new BigDecimal("0.99"), new MathContext(3));
+        }else {
+            buyPrice  = deal.getTransactionPrice().multiply(new BigDecimal("0.9"), new MathContext(3));
+        }
+        final Submit buySubmit = new Submit(deal.getStockCode(), OrderSide.Buy, buyPrice, deal.getTransactionAmount(), deal.getId(),
+                timestamp.toLocalDateTime(), "");
         submitService.save(buySubmit);
-        submitService.save(sellSubmit);
         submitService.submitOrder(buySubmit);
-        submitService.submitOrder(sellSubmit);
         return;
     }
 
     private Map<String, Submit> handleRealSubmit(String stockCode) {
         HashMap<String, Submit> stringSubmitHashMap = new HashMap<>();
-        Submit maxSell = submitService.maxSell(stockCode);
-        Submit minBuy = submitService.minBuy(stockCode);
+        Submit maxSell = submitService.minSell(stockCode);
+        Submit minBuy = submitService.maxBuy(stockCode);
         stringSubmitHashMap.put("Buy", minBuy);
         stringSubmitHashMap.put("Sell", maxSell);
         return stringSubmitHashMap;
