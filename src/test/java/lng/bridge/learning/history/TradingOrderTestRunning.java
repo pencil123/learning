@@ -61,7 +61,7 @@ public class TradingOrderTestRunning {
                 logger.info("the Sell price:{}",stringSubmitMap.get("Sell").getTransactionPrice());
                 submitService.removeById(stringSubmitMap.get("Sell").getId());
                 final Deal deal = BeanConvertUtils.copyProperties(stringSubmitMap.get("Sell"), Deal.class);
-                deal.setStatus("open");
+                deal.setStatus("close");
                 dealService.save(deal);
                 dealService.updateStatusClose(deal.getLinkBuy());
                 //如果操作为 sell，则生成一个买单
@@ -84,7 +84,6 @@ public class TradingOrderTestRunning {
             final Submit sellSubmit = new Submit(deal.getStockCode(), OrderSide.Sell, sellPrice, deal.getTransactionAmount(), deal.getId(),
                     timestamp.toLocalDateTime(), "");
             submitService.save(sellSubmit);
-            submitService.submitOrder(sellSubmit);
         }
         if(deal.getOperate() == OrderSide.Sell){
             buyPrice  = deal.getTransactionPrice().multiply(new BigDecimal("0.99"), new MathContext(3));
@@ -94,7 +93,6 @@ public class TradingOrderTestRunning {
         final Submit buySubmit = new Submit(deal.getStockCode(), OrderSide.Buy, buyPrice, deal.getTransactionAmount(), deal.getId(),
                 timestamp.toLocalDateTime(), "");
         submitService.save(buySubmit);
-        submitService.submitOrder(buySubmit);
         return;
     }
 
