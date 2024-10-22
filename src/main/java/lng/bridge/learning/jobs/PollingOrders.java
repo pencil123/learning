@@ -100,18 +100,26 @@ public class PollingOrders {
     }
 
     private void constructOrder(Deal deal) {
-        final BigDecimal buyPrice = deal.getTransactionPrice()
-                .multiply(new BigDecimal("0.9"), new MathContext(3));
-        final BigDecimal sellPrice = deal.getTransactionPrice()
-                .multiply(new BigDecimal("1.1"), new MathContext(3));
+        BigDecimal buyPrice;
+        if(deal.getOperate() == OrderSide.Buy){
+            final BigDecimal sellPrice = deal.getTransactionPrice()
+                    .multiply(new BigDecimal("1.1"), new MathContext(3));
+            final Submit sellSubmit = new Submit(deal.getStockCode(), OrderSide.Sell, sellPrice,
+                    deal.getTransactionAmount(), deal.getId(), LocalDateTime.now(), "");
+            submitService.save(sellSubmit);
+            submitService.submitOrder(sellSubmit);
+        }
+        if(deal.getOperate() == OrderSide.Sell){
+            buyPrice = deal.getTransactionPrice()
+                    .multiply(new BigDecimal("0.99"), new MathContext(3));
+        }else {
+            buyPrice = deal.getTransactionPrice()
+                    .multiply(new BigDecimal("0.9"), new MathContext(3));
+        }
         final Submit buySubmit = new Submit(deal.getStockCode(), OrderSide.Buy, buyPrice,
                 deal.getTransactionAmount(), deal.getId(), LocalDateTime.now(), "");
-        final Submit sellSubmit = new Submit(deal.getStockCode(), OrderSide.Sell, sellPrice,
-                deal.getTransactionAmount(), deal.getId(), LocalDateTime.now(), "");
         submitService.save(buySubmit);
-        submitService.save(sellSubmit);
         submitService.submitOrder(buySubmit);
-        submitService.submitOrder(sellSubmit);
         return;
     }
 }
