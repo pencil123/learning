@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 //@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 public class LearningApplication {
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));

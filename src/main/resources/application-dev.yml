@@ -1,0 +1,20 @@
+account:
+  key: d3e700950baaf1ca21597492dfb2e617
+  secret: bd90cc8091494a6320731684e0749b79d94e586a8120c58108b60bf46028a90d
+  accesstoken: m_eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsb25nYnJpZGdlIiwic3ViIjoiYWNjZXNzX3Rva2VuIiwiZXhwIjoxNzM2MzA0Njc0LCJpYXQiOjE3Mjg1Mjg2NzQsImFrIjoiZDNlNzAwOTUwYmFhZjFjYTIxNTk3NDkyZGZiMmU2MTciLCJhYWlkIjoyMDQ3MTA0OCwiYWMiOiJsYl9wYXBlcnRyYWRpbmciLCJtaWQiOjE1MjcwNjY3LCJzaWQiOiJNd2w2ZEVKVjdrVkZ1dVBqWUdHU2V3PT0iLCJibCI6MywidWwiOjAsImlrIjoibGJfcGFwZXJ0cmFkaW5nXzIwNDcxMDQ4In0.3b-XmmSy5w5PUdEETUsTxQOQWbvDnYbbLziN_wfSS88WBpLNLb42PmaGYmpYEA1VzWwnaTwpO01NKng5suUQSjm1IXASLDfIfA595meB1BNQa0wIeOmF97K1qIF4gSc7lmiqgRK3aX9r2e1TiHC6ntzy-yiKzDYjb4EAZxsF1eTPA4mkAvo7LfYJ-UoDvF5xrd3prZEARnog_eciHe2I-NXIm0Qm2Cr_S8sEo1zwM34BQVtmhZ25rDT-XkItX9fbWHiKjoHibdTnTWS-m5wjOriopAkf711Av84LymCDgZXqbLAr1RlgjEAvqPEksrU8Y5H1ov60Aii4i8CBYFn-Yb5cf2CsCwWw2_85GNKoV_q8tDdhCa8V0S6AFsjjDbygbZAWu73hWH5n_UJ4kBcG6i3riJDdXvpkjJuM37I0VYh7zYeRn5wCtuUIIkpJJDUGIM04tkqK7VIHn3_nGMdYz6-M02fJ3HGTO8yATfYbd9GSGhihtXTRLcevQVPrnUQdOyXluAyVXRqPv9CJ3Vcb8pV8lvARsYOktCtVFdE8a9Ug9f4IPEO4eMFqDzX8sKhk5ibchx7GKD55DbHDpxp7SZe6eAyNud2dT5yhFeDFe2_-qYJTzNjDLfhiibrTOjdE_Go7a3VRLbWKHeEeQyu0i55zWx9Yp5BjasRdIRu6NRs
+  region: cn
+  overnight: true
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://3w.5teams.cn:9998/learning2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: learning
+    password: nHiY6kj7gVo9WfsQR96Ec177JeEHCgPKO1U
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 5
+      minimum-idle: 1
+      connection-test-query: SELECT 1
+      validation-timeout: 10000
