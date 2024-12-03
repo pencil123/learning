@@ -1,0 +1,4 @@
+config:
+  source: F:\test\
+  target: F:\targets\
+  temp: F:\temp\
