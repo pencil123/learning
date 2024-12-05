@@ -1,4 +1,8 @@
 config:
-  source: F:\test\
-  target: F:\targets\
-  temp: F:\temp\
+  source: F:\images\source\
+  target: F:\images\target\
+  temp: F:\images\temp\
+
+#logging:
+#  level:
+#    root: debug

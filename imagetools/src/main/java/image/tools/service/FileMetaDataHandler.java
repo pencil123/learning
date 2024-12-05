@@ -36,24 +36,42 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FileMetaDataHandler {
-    @Value("config.source")
+    @Value("${config.source}")
     private String sourcePath;
-    @Value("config.target")
+    @Value("${config.target}")
     private String targetPath;
-    @Value("config.temp")
+    @Value("${config.temp}")
     private String tempPath;
     private Logger logger = LoggerFactory.getLogger(FileMetaDataHandler.class);
     private List<FileDto> fileDtos = new ArrayList<>();
 
+    DateTimeFormatter targetDir = DateTimeFormatter.ofPattern("YYYYMMW");
+    DateTimeFormatter targetName =  DateTimeFormatter.ofPattern("YYYYMMddHHmmssS");
     /**
      * 比较 temp 和 target 目录中的文件
      * 如果 hash 值相同，则删除 temp 中的文件
      */
 
-    public void deleteTempPath(){
+    public void deleteTempPath()throws IOException , NoSuchAlgorithmException{
         printFilesAndMeta(tempPath);
+        ArrayList<Path> deletePaths = new ArrayList<>();
         for(FileDto fileDto: fileDtos){
-
+            String targetFileString = fileDto.getFileName().replace(tempPath, targetPath);
+            Path path = Paths.get(targetFileString);
+            if(Files.exists(path)){
+                String tempFileHex = bytesToHex(calculateSHA256(fileDto.getFileName()));
+                logger.info("hax:{},file:{}",tempFileHex,fileDto.getFileName());
+                String targetFileHex = bytesToHex(calculateSHA256(targetFileString));
+                logger.info("hax:{},file:{}",targetFileHex,targetFileString);
+                if(tempFileHex.equals(targetFileHex)){
+                    deletePaths.add(Paths.get(fileDto.getFileName()));
+                    logger.info("delete temp file:{}",fileDto.getFileName());
+                }
+            }
+        }
+        for(Path path: deletePaths){
+            Files.delete(path);
+            logger.info("delete temp file:{}",path.toString());
         }
     }
 
@@ -76,6 +94,7 @@ public class FileMetaDataHandler {
             digest.update(allocate);
             allocate.clear();
         }
+        digestInputStream.close();
         return digest.digest();
     }
 
@@ -100,9 +119,9 @@ public class FileMetaDataHandler {
     public void renameFileNames(){
         printFilesAndMeta(sourcePath);
         for(FileDto fileDto: fileDtos){
-            String week = fileDto.getCreateTime().format(DateTimeFormatter.ofPattern("YYYYMMW"));
-            String minseconds = fileDto.getCreateTime().format(DateTimeFormatter.ofPattern("YYYYMMddHHmmssS"));
-            Path path = Paths.get(targetPath + week);
+            String subDir = fileDto.getCreateTime().format(targetDir);
+            String nameWithTime = fileDto.getCreateTime().format(targetName);
+            Path path = Paths.get(targetPath + subDir);
             if(!Files.exists(path)){
                 try {
                     Files.createDirectory(path);
@@ -110,26 +129,27 @@ public class FileMetaDataHandler {
                     e.printStackTrace();
                 }
             }
+            String subDirWithFileName = subDir +"\\"+ nameWithTime + "_" + fileDto.getSize() +  "." + fileDto.getType();
             try {
-                Files.move(Paths.get(fileDto.getFileName()),Paths.get(targetPath + week +"\\"+ minseconds + "." + fileDto.getType()));
+                Files.move(Paths.get(fileDto.getFileName()),Paths.get(targetPath + subDirWithFileName));
             } catch (IOException e) {
                 /**
                  * 文件移动到 target 目录失败，则移动到 temp 目录中
                  */
-                Path temp = Paths.get(tempPath + week);
+                Path temp = Paths.get(tempPath + subDir);
                 if(!Files.exists(temp)){
                     try {
-                        Files.createDirectory(path);
+                        Files.createDirectory(temp);
                     } catch (IOException e2) {
                         e2.printStackTrace();
                     }
                 }
                 try {
-                    Files.move(Paths.get(fileDto.getFileName()),Paths.get(tempPath + week +"\\"+ minseconds + "." + fileDto.getType()));
+                    Files.move(Paths.get(fileDto.getFileName()),Paths.get(tempPath + subDirWithFileName));
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                logger.warn("move file:{} to target:{} error",fileDto.getFileName(),targetPath + week +"\\"+ minseconds + "." + fileDto.getType());
+                logger.warn("move file:{} to target:{} error",fileDto.getFileName(),targetPath + subDirWithFileName);
             }
         }
     }
@@ -141,6 +161,7 @@ public class FileMetaDataHandler {
      * @param filePath
      */
     private void printFilesAndMeta(String filePath){
+        logger.info("the filePath:{}",filePath);
         Path path = Paths.get(filePath);
         if(Files.isDirectory(path)){
             try {

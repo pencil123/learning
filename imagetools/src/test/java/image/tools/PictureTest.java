@@ -17,8 +17,8 @@ public class PictureTest {
 
     @Test
     public void execute() throws Exception {
-        fileMetaDataHandler.printFilesAndMeta("F:\\test");
-        fileMetaDataHandler.renameFileNames();
+        //fileMetaDataHandler.renameFileNames();
+        fileMetaDataHandler.deleteTempPath();
         fileMetaDataHandler.printFile();
     }
 }
